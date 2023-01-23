@@ -1,3 +1,26 @@
+# Cosmos SDK Introduction and First Step for Building Your Own Blockchain
+
+![mio256](https://avatars.githubusercontent.com/u/71450182)
+
+## Overview
+
+https://taryu.net/ja/cosmos-sdk-introduction/
+
+## Requirement
+
+## Usage
+
+## Features
+
+## Reference
+
+## Author
+
+[mio256](https://github.com/mio256)
+
+## Licence
+
+
 # blog
 **blog** is a blockchain built using Cosmos SDK and Tendermint and created with [Ignite CLI](https://ignite.com/cli).
 
