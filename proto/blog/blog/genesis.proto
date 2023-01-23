@@ -12,7 +12,7 @@ option go_package = "blog/x/blog/types";
 // GenesisState defines the blog module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
-  PostCount postCount = 2;
+  PostCount postCount = 2 [(gogoproto.nullable) = false];
   repeated StoredPost storedPostList = 3 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }
