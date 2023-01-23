@@ -1,6 +1,7 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
 import { Params } from "./params";
+import { PostCount } from "./post_count";
 
 export const protobufPackage = "blog.blog";
 
@@ -12,6 +13,13 @@ export interface QueryParamsRequest {
 export interface QueryParamsResponse {
   /** params holds all the parameters of this module. */
   params: Params | undefined;
+}
+
+export interface QueryGetPostCountRequest {
+}
+
+export interface QueryGetPostCountResponse {
+  PostCount: PostCount | undefined;
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -102,10 +110,101 @@ export const QueryParamsResponse = {
   },
 };
 
+function createBaseQueryGetPostCountRequest(): QueryGetPostCountRequest {
+  return {};
+}
+
+export const QueryGetPostCountRequest = {
+  encode(_: QueryGetPostCountRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetPostCountRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetPostCountRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryGetPostCountRequest {
+    return {};
+  },
+
+  toJSON(_: QueryGetPostCountRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetPostCountRequest>, I>>(_: I): QueryGetPostCountRequest {
+    const message = createBaseQueryGetPostCountRequest();
+    return message;
+  },
+};
+
+function createBaseQueryGetPostCountResponse(): QueryGetPostCountResponse {
+  return { PostCount: undefined };
+}
+
+export const QueryGetPostCountResponse = {
+  encode(message: QueryGetPostCountResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.PostCount !== undefined) {
+      PostCount.encode(message.PostCount, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetPostCountResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetPostCountResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.PostCount = PostCount.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetPostCountResponse {
+    return { PostCount: isSet(object.PostCount) ? PostCount.fromJSON(object.PostCount) : undefined };
+  },
+
+  toJSON(message: QueryGetPostCountResponse): unknown {
+    const obj: any = {};
+    message.PostCount !== undefined
+      && (obj.PostCount = message.PostCount ? PostCount.toJSON(message.PostCount) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetPostCountResponse>, I>>(object: I): QueryGetPostCountResponse {
+    const message = createBaseQueryGetPostCountResponse();
+    message.PostCount = (object.PostCount !== undefined && object.PostCount !== null)
+      ? PostCount.fromPartial(object.PostCount)
+      : undefined;
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
+  /** Queries a PostCount by index. */
+  PostCount(request: QueryGetPostCountRequest): Promise<QueryGetPostCountResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -113,11 +212,18 @@ export class QueryClientImpl implements Query {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.Params = this.Params.bind(this);
+    this.PostCount = this.PostCount.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
     const promise = this.rpc.request("blog.blog.Query", "Params", data);
     return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
+  }
+
+  PostCount(request: QueryGetPostCountRequest): Promise<QueryGetPostCountResponse> {
+    const data = QueryGetPostCountRequest.encode(request).finish();
+    const promise = this.rpc.request("blog.blog.Query", "PostCount", data);
+    return promise.then((data) => QueryGetPostCountResponse.decode(new _m0.Reader(data)));
   }
 }
 

@@ -14,6 +14,15 @@
  */
 export type BlogParams = object;
 
+export interface BlogPostCount {
+  /** @format uint64 */
+  count?: string;
+}
+
+export interface BlogQueryGetPostCountResponse {
+  PostCount?: BlogPostCount;
+}
+
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
@@ -169,6 +178,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryParams = (params: RequestParams = {}) =>
     this.request<BlogQueryParamsResponse, RpcStatus>({
       path: `/blog/blog/params`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPostCount
+   * @summary Queries a PostCount by index.
+   * @request GET:/blog/blog/post_count
+   */
+  queryPostCount = (params: RequestParams = {}) =>
+    this.request<BlogQueryGetPostCountResponse, RpcStatus>({
+      path: `/blog/blog/post_count`,
       method: "GET",
       format: "json",
       ...params,

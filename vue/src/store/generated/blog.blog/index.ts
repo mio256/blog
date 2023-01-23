@@ -1,9 +1,10 @@
 import { Client, registry, MissingWalletError } from 'blog-client-ts'
 
 import { Params } from "blog-client-ts/blog.blog/types"
+import { PostCount } from "blog-client-ts/blog.blog/types"
 
 
-export { Params };
+export { Params, PostCount };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -35,9 +36,11 @@ function getStructure(template) {
 const getDefaultState = () => {
 	return {
 				Params: {},
+				PostCount: {},
 				
 				_Structure: {
 						Params: getStructure(Params.fromPartial({})),
+						PostCount: getStructure(PostCount.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -71,6 +74,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Params[JSON.stringify(params)] ?? {}
+		},
+				getPostCount: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PostCount[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -123,6 +132,28 @@ export default {
 				return getters['getParams']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryParams API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPostCount({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.BlogBlog.query.queryPostCount()).data
+				
+					
+				commit('QUERY', { query: 'PostCount', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPostCount', payload: { options: { all }, params: {...key},query }})
+				return getters['getPostCount']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPostCount API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
