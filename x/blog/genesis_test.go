@@ -17,6 +17,14 @@ func TestGenesis(t *testing.T) {
 		PostCount: &types.PostCount{
 			Count: 10,
 		},
+		StoredPostList: []types.StoredPost{
+			{
+				Index: "0",
+			},
+			{
+				Index: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -29,5 +37,6 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(got)
 
 	require.Equal(t, genesisState.PostCount, got.PostCount)
+	require.ElementsMatch(t, genesisState.StoredPostList, got.StoredPostList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

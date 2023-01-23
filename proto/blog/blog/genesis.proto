@@ -4,6 +4,7 @@ package blog.blog;
 import "gogoproto/gogo.proto";
 import "blog/blog/params.proto";
 import "blog/blog/post_count.proto";
+import "blog/blog/stored_post.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "blog/x/blog/types";
@@ -12,5 +13,6 @@ option go_package = "blog/x/blog/types";
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
   PostCount postCount = 2;
+  repeated StoredPost storedPostList = 3 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

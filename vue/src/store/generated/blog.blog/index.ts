@@ -2,9 +2,10 @@ import { Client, registry, MissingWalletError } from 'blog-client-ts'
 
 import { Params } from "blog-client-ts/blog.blog/types"
 import { PostCount } from "blog-client-ts/blog.blog/types"
+import { StoredPost } from "blog-client-ts/blog.blog/types"
 
 
-export { Params, PostCount };
+export { Params, PostCount, StoredPost };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -37,10 +38,13 @@ const getDefaultState = () => {
 	return {
 				Params: {},
 				PostCount: {},
+				StoredPost: {},
+				StoredPostAll: {},
 				
 				_Structure: {
 						Params: getStructure(Params.fromPartial({})),
 						PostCount: getStructure(PostCount.fromPartial({})),
+						StoredPost: getStructure(StoredPost.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -80,6 +84,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.PostCount[JSON.stringify(params)] ?? {}
+		},
+				getStoredPost: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.StoredPost[JSON.stringify(params)] ?? {}
+		},
+				getStoredPostAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.StoredPostAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -154,6 +170,54 @@ export default {
 				return getters['getPostCount']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryPostCount API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryStoredPost({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.BlogBlog.query.queryStoredPost( key.index)).data
+				
+					
+				commit('QUERY', { query: 'StoredPost', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryStoredPost', payload: { options: { all }, params: {...key},query }})
+				return getters['getStoredPost']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryStoredPost API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryStoredPostAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.BlogBlog.query.queryStoredPostAll(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.BlogBlog.query.queryStoredPostAll({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'StoredPostAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryStoredPostAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getStoredPostAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryStoredPostAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

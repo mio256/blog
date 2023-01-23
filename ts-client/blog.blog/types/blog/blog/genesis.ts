@@ -2,20 +2,22 @@
 import _m0 from "protobufjs/minimal";
 import { Params } from "./params";
 import { PostCount } from "./post_count";
+import { StoredPost } from "./stored_post";
 
 export const protobufPackage = "blog.blog";
 
 /** GenesisState defines the blog module's genesis state. */
 export interface GenesisState {
-  params:
-    | Params
+  params: Params | undefined;
+  postCount:
+    | PostCount
     | undefined;
   /** this line is used by starport scaffolding # genesis/proto/state */
-  postCount: PostCount | undefined;
+  storedPostList: StoredPost[];
 }
 
 function createBaseGenesisState(): GenesisState {
-  return { params: undefined, postCount: undefined };
+  return { params: undefined, postCount: undefined, storedPostList: [] };
 }
 
 export const GenesisState = {
@@ -25,6 +27,9 @@ export const GenesisState = {
     }
     if (message.postCount !== undefined) {
       PostCount.encode(message.postCount, writer.uint32(18).fork()).ldelim();
+    }
+    for (const v of message.storedPostList) {
+      StoredPost.encode(v!, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -42,6 +47,9 @@ export const GenesisState = {
         case 2:
           message.postCount = PostCount.decode(reader, reader.uint32());
           break;
+        case 3:
+          message.storedPostList.push(StoredPost.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -54,6 +62,9 @@ export const GenesisState = {
     return {
       params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
       postCount: isSet(object.postCount) ? PostCount.fromJSON(object.postCount) : undefined,
+      storedPostList: Array.isArray(object?.storedPostList)
+        ? object.storedPostList.map((e: any) => StoredPost.fromJSON(e))
+        : [],
     };
   },
 
@@ -62,6 +73,11 @@ export const GenesisState = {
     message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     message.postCount !== undefined
       && (obj.postCount = message.postCount ? PostCount.toJSON(message.postCount) : undefined);
+    if (message.storedPostList) {
+      obj.storedPostList = message.storedPostList.map((e) => e ? StoredPost.toJSON(e) : undefined);
+    } else {
+      obj.storedPostList = [];
+    }
     return obj;
   },
 
@@ -73,6 +89,7 @@ export const GenesisState = {
     message.postCount = (object.postCount !== undefined && object.postCount !== null)
       ? PostCount.fromPartial(object.postCount)
       : undefined;
+    message.storedPostList = object.storedPostList?.map((e) => StoredPost.fromPartial(e)) || [];
     return message;
   },
 };

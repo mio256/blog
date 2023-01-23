@@ -25,9 +25,31 @@ func TestGenesisState_Validate(t *testing.T) {
 				PostCount: &types.PostCount{
 					Count: 35,
 				},
+				StoredPostList: []types.StoredPost{
+					{
+						Index: "0",
+					},
+					{
+						Index: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated storedPost",
+			genState: &types.GenesisState{
+				StoredPostList: []types.StoredPost{
+					{
+						Index: "0",
+					},
+					{
+						Index: "0",
+					},
+				},
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {
